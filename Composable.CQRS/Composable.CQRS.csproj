@@ -135,7 +135,6 @@
     <Compile Include="CQRS\Command\CommandDomainValidationExceptionResponse.cs" />
     <Compile Include="CQRS\Command\CommandExecutionExceptionResponse.cs" />
     <Compile Include="CQRS\Command\CommandFailedEvent.cs" />
-    <Compile Include="CQRS\Command\CommandHandlerBase.cs" />
     <Compile Include="CQRS\Command\CommandResult.cs" />
     <Compile Include="CQRS\Command\CommandService.cs" />
     <Compile Include="CQRS\Command\CommandSucceededEvent.cs" />
