@@ -1,0 +1,20 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Blazor.Components
+
+@page "/availability"
+@inject HttpClient Http
+
+<p>Status: @_availabilityStatus</p>
+
+@functions {
+    [Parameter]
+    private Guid ConsultantId { get; set; }
+
+    private string _availabilityStatus = "N/A";
+
+    protected override async Task OnInitAsync()
+    {
+        var available = await Http.GetJsonAsync<bool>("api/Availability/" + ConsultantId);
+        _availabilityStatus = available ? "Available" : "Contracted";
+    }
+}

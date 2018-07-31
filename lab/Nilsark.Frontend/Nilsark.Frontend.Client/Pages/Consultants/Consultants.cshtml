@@ -1,0 +1,76 @@
+﻿@using System.Net
+@using System.Net.Http
+@using Nilsark.Consultants.Shared.Commands
+@using Nilsark.Consultants.Shared.QueryModels
+@using Nilsark.Frontend.Shared
+
+@page "/consultants"
+@inject HttpClient Http
+
+@if (_consultants == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="alert alert-primary">
+        <p><button class="btn btn-lg btn-success" onclick="@EnrolConsultant">Enrol another consultant</button></p>
+        <p>Enrolments will automatically be dismissed after 30 seconds</p>
+    </div>
+
+    foreach (var consultant in _consultants)
+    {
+    <div class="card" style="width: 18rem;">
+        <Avatar CssClass="card-img-top" ConsultantId="@consultant.ConsultantId" />
+        <div class="card-body">
+            <h5 class="card-title">@consultant.FullName</h5>
+            <p class="card-text">Consultant</p>
+            <span><Availability ConsultantId="@consultant.ConsultantId" /></span>
+            <a href="mailto:@consultant.Email" class="btn btn-primary">Email</a>
+        </div>
+    </div>
+    }
+}
+
+@functions {
+    private readonly string[] _names =
+    {
+        "Charmain Mcqueary",
+        "Dollie Angeles",
+        "Mikel Becerril",
+        "Ilana Lute",
+        "Stacey Beard",
+        "Bob Laracuente",
+        "Britni Cales",
+        "Jesse Welle",
+        "Enid Poissant",
+        "Marcelene Hammel",
+        "Monroe Angulo",
+        "Alton Whitting",
+        "Chris Nobles",
+        "Myles Marrinan",
+        "Wiley Vanslyke",
+        "Markus Laforge",
+        "Marion Beachum",
+        "Pierre Brough",
+        "Lester Perrin",
+        "Fausto Porter"
+    };
+
+    ConsultantViewModel[] _consultants;
+
+    protected override async Task OnInitAsync()
+    {
+        _consultants = await Http.GetJsonAsync<ConsultantViewModel[]>("api/Consultants");
+    }
+
+    private async Task EnrolConsultant()
+    {
+        var rnd = new Random();
+        var name = _names[rnd.Next(0, 9)];
+
+        await Http.SendJsonAsync(HttpMethod.Post, "/api/Consultants", EnrolConsultantCommand.Create(Guid.NewGuid(), name, $"{name}@nilsark.com"));
+
+        _consultants = await Http.GetJsonAsync<ConsultantViewModel[]>("api/Consultants");
+    }
+}

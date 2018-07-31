@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Server" Version="0.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Composable\src\framework\Composable.CQRS.ExternalDependencies\Composable.CQRS.ExternalDependencies.csproj" />
+    <ProjectReference Include="..\..\Nilsark.Avatars\Nilsark.Avatars.Shared\Nilsark.Avatars.Shared.csproj" />
+    <ProjectReference Include="..\..\Nilsark.Consultants.Shared\Nilsark.Consultants.Shared.csproj" />
+    <ProjectReference Include="..\Nilsark.Frontend.Client\Nilsark.Frontend.Client.csproj" />
+    <ProjectReference Include="..\Nilsark.Frontend.Shared\Nilsark.Frontend.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
