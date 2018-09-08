@@ -97,10 +97,12 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actor1ActorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Actor1.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ActorEventSource.cs" />
+    <Compile Include="ReadModels\ReadModelGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PackageRoot\ServiceManifest.xml" />
@@ -112,6 +114,14 @@
     <ProjectReference Include="..\Actor1.Interfaces\Actor1.Interfaces.csproj">
       <Project>{9BF704E5-944F-4B0D-85CC-62C9E0A2B0AF}</Project>
       <Name>Actor1.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{A034D2C2-297B-4FE0-9E65-00C4D45256FA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{DA5D64AB-97B8-4828-8855-0DFE60B7E796}</Project>
+      <Name>Domain</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

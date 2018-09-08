@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Common.CQRS;
 using Common.DDD;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
@@ -21,7 +23,7 @@ namespace Common.ServiceFabric.Extensions.Actors.Runtime
         {
             if (DomainState != null) return await Task.FromResult(DomainState);
 
-            var eventStream = await this.StateManager.GetOrAddStateAsync<TDomainEventStream>(EventStreamStateKey, new TDomainEventStream());
+            var eventStream = await this.StateManager.GetOrAddStateAsync(EventStreamStateKey, new TDomainEventStream());
             DomainState = new TDomainAggregateRoot();
             DomainState.Initialize(this, eventStream.DomainEvents);
             return DomainState;
@@ -29,16 +31,14 @@ namespace Common.ServiceFabric.Extensions.Actors.Runtime
         
         protected async Task StoreDomainEventAsync(IDomainEvent domainEvent)
         {
-            var eventStream = await StateManager.GetOrAddStateAsync<TDomainEventStream>(EventStreamStateKey, new TDomainEventStream());
+            var eventStream = await StateManager.GetOrAddStateAsync(EventStreamStateKey, new TDomainEventStream());
             eventStream.Append(domainEvent);
-            await StateManager.SetStateAsync(EventStreamStateKey, eventStream);
+            await StateManager.SetStateAsync(EventStreamStateKey, eventStream); // Sets the state in a pending structure, not yet commited (commited automatically when actor method finishes)
         }
 
         public async Task RaiseDomainEvent<TDomainEvent>(TDomainEvent domainEvent) where TDomainEvent : IDomainEvent
         {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            var handleDomainEvent = this as IHandleDomainEvent<TDomainEvent>;
-            if (handleDomainEvent == null)
+            if (!(this is IHandleDomainEvent<TDomainEvent> handleDomainEvent))
             {
                 throw new Exception($"No handler found for {domainEvent}.");
             }
@@ -46,5 +46,10 @@ namespace Common.ServiceFabric.Extensions.Actors.Runtime
             await handleDomainEvent.Handle(domainEvent);
         }
 
+        protected async Task ExecuteCommandAsync
+            (Action action, ICommand command, CancellationToken cancellationToken)
+        {
+            await CommandDeduplicationHelper.ProcessOnceAsync(action, command, StateManager, cancellationToken);
+        }
     }
 }

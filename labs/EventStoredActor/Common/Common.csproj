@@ -33,6 +33,24 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ServiceFabric.Actors, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=AMD64">
       <HintPath>..\packages\Microsoft.ServiceFabric.Actors.3.2.176\lib\net452\Microsoft.ServiceFabric.Actors.dll</HintPath>
@@ -94,6 +112,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ServiceFabric\Extensions\CommandDeduplicationHelper.cs" />
     <Compile Include="CQRS\CommandBase.cs" />
     <Compile Include="CQRS\ICommand.cs" />
     <Compile Include="CQRS\ReadModelGenerator.cs" />
@@ -115,6 +134,7 @@
     <Compile Include="DDD\ValueObject.cs" />
     <Compile Include="Reflection\MemberAccessorHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceFabric\Extensions\Actors\Runtime\ActorStateProviderEventStreamReader.cs" />
     <Compile Include="ServiceFabric\Extensions\Actors\Runtime\EventStoredActorBase.cs" />
   </ItemGroup>
   <ItemGroup>

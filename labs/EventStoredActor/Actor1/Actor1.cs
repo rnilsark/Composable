@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
-using Microsoft.ServiceFabric.Actors.Client;
 using Actor1.Interfaces;
+using Actor1.Interfaces.Commands;
+using Common.DDD;
+using Common.ServiceFabric.Extensions.Actors.Runtime;
+using Domain;
+using Domain.Events;
+using Domain.Events.Implementation;
 
 namespace Actor1
 {
@@ -19,7 +21,11 @@ namespace Actor1
     ///  - None: State is kept in memory only and not replicated.
     /// </remarks>
     [StatePersistence(StatePersistence.Persisted)]
-    internal class Actor1 : Actor, IActor1
+    internal class Actor1 : 
+        EventStoredActorBase<Foo, EventStream>, 
+        IActor1, 
+        IHandleDomainEvent<NameSet>, 
+        IHandleDomainEvent<BarAdded>
     {
         /// <summary>
         /// Initializes a new instance of Actor1
@@ -35,37 +41,23 @@ namespace Actor1
         /// This method is called whenever an actor is activated.
         /// An actor is activated the first time any of its methods are invoked.
         /// </summary>
-        protected override Task OnActivateAsync()
+        protected override async Task OnActivateAsync()
         {
             ActorEventSource.Current.ActorMessage(this, "Actor activated.");
-
-            // The StateManager is this actor's private state store.
-            // Data stored in the StateManager will be replicated for high-availability for actors that use volatile or persisted state storage.
-            // Any serializable object can be saved in the StateManager.
-            // For more information, see https://aka.ms/servicefabricactorsstateserialization
-
-            return this.StateManager.TryAddStateAsync("count", 0);
+            await GetAndSetDomainAsync(); // Loads event stream from disk.
         }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <returns></returns>
-        Task<int> IActor1.GetCountAsync(CancellationToken cancellationToken)
+        public Task SetNameAsync(SetNameCommand command, CancellationToken cancellationToken)
         {
-            return this.StateManager.GetStateAsync<int>("count", cancellationToken);
+            // Handles deduplication
+            return ExecuteCommandAsync(
+                () => DomainState.SetName(this.GetActorId().GetGuidId(), command.Name),
+                command,
+                cancellationToken);
         }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        Task IActor1.SetCountAsync(int count, CancellationToken cancellationToken)
-        {
-            // Requests are not guaranteed to be processed in order nor at most once.
-            // The update function here verifies that the incoming count is greater than the current count to preserve order.
-            return this.StateManager.AddOrUpdateStateAsync("count", count, (key, value) => count > value ? count : value, cancellationToken);
-        }
+        // Sets state (commited when actor method finnishes)
+        public async Task Handle(NameSet domainEvent) => await StoreDomainEventAsync(domainEvent);
+        public async Task Handle(BarAdded domainEvent) => await StoreDomainEventAsync(domainEvent);
     }
 }

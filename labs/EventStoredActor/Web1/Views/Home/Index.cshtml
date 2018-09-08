@@ -1,0 +1,27 @@
+﻿@model SetNameUiCommand
+@{
+    ViewData["Title"] = "Foo";
+}
+
+<h2>Foo</h2>
+
+<div>
+    <form asp-action="Index">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label asp-for="Name" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="Name" class="form-control" />
+                </div>
+            </div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

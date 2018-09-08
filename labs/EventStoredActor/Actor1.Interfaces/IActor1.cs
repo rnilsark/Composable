@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Actor1.Interfaces.Commands;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Remoting.FabricTransport;
 using Microsoft.ServiceFabric.Services.Remoting;
@@ -10,23 +10,21 @@ using Microsoft.ServiceFabric.Services.Remoting;
 [assembly: FabricTransportActorRemotingProvider(RemotingListenerVersion = RemotingListenerVersion.V2_1, RemotingClientVersion = RemotingClientVersion.V2_1)]
 namespace Actor1.Interfaces
 {
-    /// <summary>
-    /// This interface defines the methods exposed by an actor.
-    /// Clients use this interface to interact with the actor that implements it.
-    /// </summary>
     public interface IActor1 : IActor
     {
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <returns></returns>
-        Task<int> GetCountAsync(CancellationToken cancellationToken);
+        Task SetNameAsync(SetNameCommand command, CancellationToken cancellationToken);
+    }
 
-        /// <summary>
-        /// TODO: Replace with your own actor method.
-        /// </summary>
-        /// <param name="count"></param>
-        /// <returns></returns>
-        Task SetCountAsync(int count, CancellationToken cancellationToken);
+    public interface IActor1ActorService : IActorService, IService
+    {
+        Task<FooReadModel[]> GetAllAsync(CancellationToken cancellationToken);
+        Task<FooReadModel> GetAsync(Guid id, CancellationToken cancellationToken);
+    }
+
+    [DataContract]
+    public class FooReadModel
+    {
+        [DataMember]
+        public string Name { get; set; }
     }
 }
