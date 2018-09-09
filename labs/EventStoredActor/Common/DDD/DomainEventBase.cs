@@ -1,20 +1,10 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿//using System;
+//using Composable.Persistence.EventStore;
 
-namespace Common.DDD
-{
-    [DataContract]
-    public abstract class DomainEventBase : IDomainEvent
-    {
-        protected DomainEventBase()
-        {
-            EventId = Guid.NewGuid();
-            UtcTimeStamp = DateTime.UtcNow;
-        }
+//namespace Common.DDD
+//{
+//    public abstract class DomainEventBase : AggregateEvent, IAggregateRootEvent
+//    {
 
-        [DataMember]
-        public Guid EventId { get; private set; }
-        [DataMember]
-        public DateTime UtcTimeStamp { get; private set; }
-    }
-}
+//    }
+//}

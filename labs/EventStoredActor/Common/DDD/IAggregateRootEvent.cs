@@ -1,4 +1,5 @@
 ﻿using System;
+using Composable.Persistence.EventStore;
 
 namespace Common.DDD
 {
@@ -12,8 +13,7 @@ namespace Common.DDD
 
     }
 
-    public interface IAggregateRootEvent : IDomainEvent
+    public interface IAggregateRootEvent : IDomainEvent, IAggregateEvent
     {
-        Guid AggregateRootId { get; set; }
     }
 }

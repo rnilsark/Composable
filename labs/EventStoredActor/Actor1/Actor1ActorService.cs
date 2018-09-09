@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Actor1.Interfaces;
-using Actor1.ReadModels;
+using Composable.Messaging.Buses;
+using Composable.Persistence.EventStore;
 using Domain.Events;
-using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Query;
 using Microsoft.ServiceFabric.Actors.Runtime;
 
@@ -15,19 +15,21 @@ namespace Actor1
 {
     internal class Actor1ActorService : ActorService, IActor1ActorService
     {
-        private readonly ActorStateProviderEventStreamReader<EventStream> _stateProviderEventStreamReader;
+        private readonly IEndpoint _composableEndpoint;
+        //private readonly ActorStateProviderEventStreamReader<EventStream> _stateProviderEventStreamReader;
 
         public Actor1ActorService
         (
             StatefulServiceContext context,
             ActorTypeInformation actorTypeInfo,
-            Func<ActorService, ActorId, ActorBase> actorFactory = null,
+            IEndpoint composableEndpoint,
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
             IActorStateProvider stateProvider = null, // Handles changes to state
             ActorServiceSettings settings = null) :
-            base(context, actorTypeInfo, actorFactory, stateManagerFactory, stateProvider, settings)
+            base(context, actorTypeInfo, (service, id) => new Actor1(service, id, composableEndpoint), stateManagerFactory, stateProvider, settings)
         {
-            _stateProviderEventStreamReader = new ActorStateProviderEventStreamReader<EventStream>(StateProvider, Actor1.EventStreamStateKey);
+            _composableEndpoint = composableEndpoint;
+            //_stateProviderEventStreamReader = new ActorStateProviderEventStreamReader<EventStream>(StateProvider, Actor1.EventStreamStateKey);
         }
 
         protected override async Task RunAsync(CancellationToken cancellationToken)
@@ -36,10 +38,12 @@ namespace Actor1
 
             if (cancellationToken.CanBeCanceled)
                 cancellationToken.ThrowIfCancellationRequested();
-
+            
         }
 
-        public async Task<FooReadModel[]> GetAllAsync(CancellationToken cancellationToken)
+        #region Not important
+
+        public async Task<FooReadModelContract[]> GetAllAsync(CancellationToken cancellationToken)
         {
             var aggregateRootIds = await GetAllGuidsAsync(int.MaxValue, cancellationToken);
             var getTasks = aggregateRootIds.Select(id => GetAsync(id, cancellationToken));
@@ -64,14 +68,18 @@ namespace Actor1
             return ids;
         }
 
-        public Task<FooReadModel> GetAsync(Guid id, CancellationToken cancellationToken)
+        #endregion
+
+        public Task<FooReadModelContract> GetAsync(Guid id, CancellationToken cancellationToken)
         {
-            Task<FooReadModel> model = null;
-            using (var generator = new ReadModelGenerator(_stateProviderEventStreamReader))
+            var container = _composableEndpoint.ServiceLocator;
+            using (container.BeginScope())
             {
-                model = generator.TryGenerateAsync(id, cancellationToken);
+                var eventStoreReader = container.Resolve<IEventStoreReader>();
+                var history = eventStoreReader.GetHistory(id).Cast<IFooEvent>();
+                var result = new FooReadModel(history);
+                return Task.FromResult(new FooReadModelContract { Name = result.Name });
             }
-            return model;
         }
     }
 }

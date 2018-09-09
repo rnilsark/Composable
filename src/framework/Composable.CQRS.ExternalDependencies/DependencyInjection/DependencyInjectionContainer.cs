@@ -1,4 +1,5 @@
 ﻿using System;
+using Composable.DependencyInjection.SimpleInjectorImplementation;
 using Composable.Messaging.Buses;
 using JetBrains.Annotations;
 
@@ -27,9 +28,9 @@ namespace Composable.DependencyInjection
 
         public static IDependencyInjectionContainer Create(IRunMode runMode = null)
         {
-            //IDependencyInjectionContainer container = new SimpleInjectorDependencyInjectionContainer(runMode ?? DependencyInjection.RunMode.Production);
+            IDependencyInjectionContainer container = new SimpleInjectorDependencyInjectionContainer(runMode ?? DependencyInjection.RunMode.Production);
             //IDependencyInjectionContainer container = new WindsorDependencyInjectionContainer(runMode ?? DependencyInjection.RunMode.Production);
-            IDependencyInjectionContainer container = new ComposableDependencyInjectionContainer(runMode);
+            //IDependencyInjectionContainer container = new ComposableDependencyInjectionContainer(runMode);
             container.Register(Singleton.For<IServiceLocator>().CreatedBy(() => container.CreateServiceLocator()));
             return container;
         }

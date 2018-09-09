@@ -1,4 +1,5 @@
 ﻿using Common.DDD;
+using Composable.Persistence.EventStore;
 
 namespace Domain.Events
 {
@@ -8,10 +9,10 @@ namespace Domain.Events
 
     public interface IFooNamePropertyUpdated : IFooEvent
     {
-        string Name { get; set; }
+        string Name { get; }
     }
     
-    public interface IFooCreatedEvent : IAggregateRootCreatedEvent, IFooNamePropertyUpdated { }
+    public interface INameSetEvent : IAggregateCreatedEvent, IFooNamePropertyUpdated { }
 
     public interface IBarEvent : IFooEvent
     {

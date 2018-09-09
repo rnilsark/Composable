@@ -33,9 +33,9 @@ namespace Common.DDD
                         $"Only the first event should implement {typeof(IAggregateRootCreatedEvent)}.");
                 }
 
-                if(domainEvent.AggregateRootId == Guid.Empty)
+                if(domainEvent.AggregateId == Guid.Empty)
                 {
-                    throw new AggregateRootException($"Missing {nameof(domainEvent.AggregateRootId)}");
+                    throw new AggregateRootException($"Missing {nameof(domainEvent.AggregateId)}");
                 }
             }
             else
@@ -47,13 +47,13 @@ namespace Common.DDD
                         $"Did you forget to implement {typeof(IAggregateRootCreatedEvent)} in the first event?");
                 }
 
-                if(domainEvent.AggregateRootId != Guid.Empty && domainEvent.AggregateRootId != AggregateRootId)
+                if(domainEvent.AggregateId != Guid.Empty && domainEvent.AggregateId != AggregateRootId)
                 {
                     throw new AggregateRootException(
-                        $"{nameof(AggregateRootId)} in event is  {domainEvent.AggregateRootId} which is different from the current {AggregateRootId}");
+                        $"{nameof(AggregateRootId)} in event is  {domainEvent.AggregateId} which is different from the current {AggregateRootId}");
                 }
 
-                domainEvent.AggregateRootId = AggregateRootId;
+                //domainEvent.AggregateId = AggregateRootId;
             }
 
             ApplyEvent(domainEvent);
@@ -75,7 +75,7 @@ namespace Common.DDD
         {
             if (domainEvent is IAggregateRootCreatedEvent)
             {
-                SetId(domainEvent.AggregateRootId);
+                SetId(domainEvent.AggregateId);
             }
 
             _eventDispatcher.Dispatch(domainEvent);

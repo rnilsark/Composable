@@ -38,3 +38,5 @@ nCrunchTemp*
 UpgradeLog*.htm
 /src/framework/docs/
 /src/framework/Documentation/Website/adoc-render-test/
+/labs/EventStoredActor/EventStoredActor/pkg/*
+/labs/EventStoredActor/packages/*

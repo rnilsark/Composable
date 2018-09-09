@@ -96,6 +96,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\framework\Composable.CQRS\Composable.CQRS.csproj">
+      <Project>{BF7072BC-8C72-421C-8BF3-82E28F7A88AC}</Project>
+      <Name>Composable.CQRS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{A034D2C2-297B-4FE0-9E65-00C4D45256FA}</Project>
       <Name>Common</Name>

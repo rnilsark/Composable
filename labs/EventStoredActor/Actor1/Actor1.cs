@@ -6,6 +6,9 @@ using Actor1.Interfaces;
 using Actor1.Interfaces.Commands;
 using Common.DDD;
 using Common.ServiceFabric.Extensions.Actors.Runtime;
+using Composable.DependencyInjection;
+using Composable.Messaging.Buses;
+using Composable.Persistence.EventStore;
 using Domain;
 using Domain.Events;
 using Domain.Events.Implementation;
@@ -22,19 +25,23 @@ namespace Actor1
     /// </remarks>
     [StatePersistence(StatePersistence.Persisted)]
     internal class Actor1 : 
-        EventStoredActorBase<Foo, EventStream>, 
-        IActor1, 
-        IHandleDomainEvent<NameSet>, 
-        IHandleDomainEvent<BarAdded>
+        EventStoredActorBase, 
+        IActor1 
+        //IHandleDomainEvent<NameSet>, 
+        //IHandleDomainEvent<BarAdded>
     {
+        private readonly IEndpoint _composableEndpoint;
+
         /// <summary>
         /// Initializes a new instance of Actor1
         /// </summary>
         /// <param name="actorService">The Microsoft.ServiceFabric.Actors.Runtime.ActorService that will host this actor instance.</param>
         /// <param name="actorId">The Microsoft.ServiceFabric.Actors.ActorId for this actor instance.</param>
-        public Actor1(ActorService actorService, ActorId actorId)
+        /// <param name="composableEndpoint"></param>
+        public Actor1(ActorService actorService, ActorId actorId, IEndpoint composableEndpoint)
             : base(actorService, actorId)
         {
+            _composableEndpoint = composableEndpoint;
         }
 
         /// <summary>
@@ -44,20 +51,56 @@ namespace Actor1
         protected override async Task OnActivateAsync()
         {
             ActorEventSource.Current.ActorMessage(this, "Actor activated.");
-            await GetAndSetDomainAsync(); // Loads event stream from disk.
+            //await GetAndSetDomainAsync(); // Loads event stream from disk.
         }
+
+        //public Task EditNameAsync(SetNameCommand command)
+        //{
+        //    var container = _composableEndpoint.ServiceLocator;
+        //    using (container.BeginScope())
+        //    {
+        //        container.ExecuteTransaction(() =>
+        //        {
+        //            var eventStoreUpdater = container.Resolve<IEventStoreUpdater>();
+        //            var foo = eventStoreUpdater.Get<Foo>(this.GetActorId().GetGuidId());
+        //            foo.SetName(this.GetActorId().GetGuidId(), command.Name);                    
+        //        });
+        //    }
+        //}
 
         public Task SetNameAsync(SetNameCommand command, CancellationToken cancellationToken)
         {
+            var container = _composableEndpoint.ServiceLocator;
+            using (container.BeginScope())
+            {
+                container.ExecuteTransaction(() =>
+                {
+                    var eventStoreUpdater = container.Resolve<IEventStoreUpdater>();
+
+                    var foo = new Foo();
+                    foo.SetName(this.GetActorId().GetGuidId(), command.Name);                    
+                    eventStoreUpdater.Save(foo);
+                });
+            }
+
+
             // Handles deduplication
-            return ExecuteCommandAsync(
-                () => DomainState.SetName(this.GetActorId().GetGuidId(), command.Name),
-                command,
-                cancellationToken);
+            //return ExecuteCommandAsync(
+            //    () => DomainState.SetName(this.GetActorId().GetGuidId(), command.Name),
+            //    command,
+            //    cancellationToken);
+
+            //await UpdateQueryModel();
+            return Task.CompletedTask;
         }
 
         // Sets state (commited when actor method finnishes)
-        public async Task Handle(NameSet domainEvent) => await StoreDomainEventAsync(domainEvent);
-        public async Task Handle(BarAdded domainEvent) => await StoreDomainEventAsync(domainEvent);
+        //public async Task Handle(NameSet domainEvent)
+        //{
+            //await StoreDomainEventAsync(domainEvent);
+            //await UpdateQueryModel();
+        //}
+
+        //public async Task Handle(BarAdded domainEvent) => await StoreDomainEventAsync(domainEvent);
     }
 }

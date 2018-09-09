@@ -1,4 +1,5 @@
 ﻿using System;
+using Composable.Persistence.EventStore;
 
 namespace Common.DDD
 {

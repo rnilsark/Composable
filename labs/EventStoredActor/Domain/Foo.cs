@@ -2,40 +2,39 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.DDD;
+using Composable.GenericAbstractions.Time;
+using Composable.Persistence.EventStore.Aggregates;
 using Domain.Events;
 using Domain.Events.Implementation;
 
 namespace Domain
 {
-    public partial class Foo : AggregateRoot<IFooEvent>
+    public partial class Foo : Aggregate<Foo, FooEvent, IFooEvent>
     {
-        public Foo()
+        public Foo() : base(new DateTimeNowTimeSource())
         {
             RegisterEventAppliers()
-                .For<IFooCreatedEvent>(Apply)
-                .For<IFooNamePropertyUpdated>(e => Name = e.Name)
-                .For<IBarAdded>(e => Bars.Add(new Bar(this, e.BarId)))
-                .For<IBarEvent>(e => Bars.Single(bar => bar.Id == e.BarId).ApplyEvent(e));
+                .For<INameSetEvent>(Apply)
+                .For<IFooNamePropertyUpdated>(e => Name = e.Name);
+
+            _bars = Bar.CreateSelfManagingCollection(this);
         }
 
-        private void Apply(IFooCreatedEvent @event)
+        private void Apply(INameSetEvent @event)
         {
             Name = @event.Name;
         }
 
-        public string Name { get; set; }
-        public IList<Bar> Bars { get; set; } = new List<Bar>();
+        public string Name { get; private set; }
+
+        private Bar.CollectionManager _bars;
 
         public void SetName(Guid id, string name)
         {
             if (name.Length < 3)
                 throw new ArgumentException("Name should be at least 5 characters.");
 
-            RaiseEvent(new NameSet
-            {
-                AggregateRootId = id,
-                Name = name
-            });
+            Publish(new NameSet(id, name));
         }
     }
 }

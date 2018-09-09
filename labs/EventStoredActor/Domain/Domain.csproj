@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\framework\Composable.CQRS\Composable.CQRS.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 

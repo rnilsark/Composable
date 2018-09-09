@@ -13,7 +13,7 @@ namespace Composable.Messaging.Buses.Implementation
         {
             get
             {
-                var configurationValue = _settingsProvider.GetString("ServerEndpoints");
+                var configurationValue = "";//_settingsProvider.GetString("ServerEndpoints");
                 var addresses = configurationValue.Split(';')
                                                   .Select(stringValue => stringValue.Trim())
                                                   .Where(stringValue => !string.IsNullOrEmpty(stringValue))
