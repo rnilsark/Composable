@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
@@ -68,30 +69,55 @@ namespace Actor1
         //    }
         //}
 
-        public Task SetNameAsync(SetNameCommand command, CancellationToken cancellationToken)
+        private TResult RunTransaction<TResult, TComponent>(Func<TComponent, TResult> func) where TComponent : class
         {
+            TResult result = default(TResult);
             var container = _composableEndpoint.ServiceLocator;
             using (container.BeginScope())
             {
                 container.ExecuteTransaction(() =>
                 {
-                    var eventStoreUpdater = container.Resolve<IEventStoreUpdater>();
-
-                    var foo = new Foo();
-                    foo.SetName(this.GetActorId().GetGuidId(), command.Name);                    
-                    eventStoreUpdater.Save(foo);
+                    var component = container.Resolve<TComponent>();
+                    result = func(component);
                 });
             }
 
+            return result;
 
-            // Handles deduplication
-            //return ExecuteCommandAsync(
-            //    () => DomainState.SetName(this.GetActorId().GetGuidId(), command.Name),
-            //    command,
-            //    cancellationToken);
+        } 
 
-            //await UpdateQueryModel();
-            return Task.CompletedTask;
+        public Task SetNameAsync(SetNameCommand command, CancellationToken cancellationToken)
+        {
+            return RunTransaction((IEventStoreUpdater eventStoreUpdater) =>
+            {
+                var foo = new Foo();
+                foo.SetName(this.GetActorId().GetGuidId(), command.Name);                    
+                eventStoreUpdater.Save(foo);
+                return Task.CompletedTask;
+            });
+
+            //var container = _composableEndpoint.ServiceLocator;
+            //using (container.BeginScope())
+            //{
+            //    container.ExecuteTransaction(() =>
+            //    {
+            //        var eventStoreUpdater = container.Resolve<IEventStoreUpdater>();
+
+            //        var foo = new Foo();
+            //        foo.SetName(this.GetActorId().GetGuidId(), command.Name);                    
+            //        eventStoreUpdater.Save(foo);
+            //    });
+            //}
+
+
+            //// Handles deduplication
+            ////return ExecuteCommandAsync(
+            ////    () => DomainState.SetName(this.GetActorId().GetGuidId(), command.Name),
+            ////    command,
+            ////    cancellationToken);
+
+            ////await UpdateQueryModel();
+            //return Task.CompletedTask;
         }
 
         // Sets state (commited when actor method finnishes)
