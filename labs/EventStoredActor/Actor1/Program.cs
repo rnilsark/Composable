@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Fabric;
 using System.Threading;
-using Common.ServiceFabric.Extensions;
 using Composable.DependencyInjection;
 using Composable.DependencyInjection.Persistence;
 using Composable.Messaging.Buses;
-using Composable.System.Configuration;
-using Composable.System.Data.SqlClient;
 using Domain;
 using Domain.Events;
 using Microsoft.ServiceFabric.Actors.Runtime;
@@ -39,13 +35,10 @@ namespace Actor1
         {
             public IEndpoint RegisterWith(IEndpointHost host)
             {
-                return host.RegisterEndpoint(name: "Foo",
-                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
-                    setup: RegisterDomainComponents,
-                    isPureClientEndpoint: true);
+                return host.RegisterClientEndpoint(setup: RegisterDomainComponents);
             }
 
-            static void RegisterDomainComponents(IEndpointBuilder builder)
+            private static void RegisterDomainComponents(IEndpointBuilder builder)
             {
                 builder.TypeMapper
                     .Map<Domain.Foo>("c2ca53e0-ee6d-4725-8bf8-c13b680d0ac5")

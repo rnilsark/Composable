@@ -61,7 +61,7 @@ namespace Composable.Messaging.Buses
 
             _connectionProvider = container.RunMode.IsTesting
                                          ? (ISqlConnectionProviderSource)new SqlServerDatabasePoolSqlConnectionProviderSource()
-                                         : new AppConfigSqlConnectionProviderSource();
+                                         : new ConfigurationSqlConnectionProviderSource(new AppConfigConfigurationParameterProvider());
 
             var endpointSqlConnection = new LazySqlServerConnectionProvider(
                 () => _container.CreateServiceLocator().Resolve<ISqlConnectionProviderSource>().GetConnectionProvider(Configuration.ConnectionStringName).ConnectionString);
@@ -85,6 +85,7 @@ namespace Composable.Messaging.Buses
                 Singleton.For<IAggregateTypeValidator>().CreatedBy(() => new AggregateTypeValidator(_typeMapper)),
                 Singleton.For<IDocumentDbSerializer>().CreatedBy(() => new DocumentDbSerializer(_typeMapper)),
                 Singleton.For<IRemotableMessageSerializer>().CreatedBy(() => new RemotableMessageSerializer(_typeMapper)),
+                Singleton.For<IAggregateTypeValidator>().CreatedBy(() => new AggregateTypeValidator(_typeMapper)),
                 Singleton.For<IEventstoreEventPublisher>().CreatedBy((IInterprocessTransport interprocessTransport, IMessageHandlerRegistry messageHandlerRegistry) => new EventstoreEventPublisher(interprocessTransport, messageHandlerRegistry)),
                 Scoped.For<IRemoteApiNavigatorSession>().CreatedBy((IInterprocessTransport interprocessTransport) => new RemoteApiBrowserSession(interprocessTransport)));
 
