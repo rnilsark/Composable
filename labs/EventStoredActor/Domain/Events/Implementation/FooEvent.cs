@@ -39,14 +39,14 @@ namespace Domain.Events.Implementation
     {
         public int BarId { get; protected set; }
 
-        public class IdGetterSetter : BarEvent, IGetSetAggregateEntityEventEntityId<int, BarEvent, IBarEvent>
+        public class IdGetterSetter : BarEvent, IGetSetAggregateEntityEventEntityId<int, BarEvent, IBarEvent> //This is different from FG.CQRS, but cleaner
         {
             public void SetEntityId(BarEvent @event, int id) => @event.BarId = id;
             public int GetId(IBarEvent @event) => @event.BarId;
         }
     }
 
-    public class BarAdded : BarEvent, IBarAdded
+    public class BarAddedEvent : BarEvent, IBarAdded
     {
        
     }

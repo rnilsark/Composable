@@ -1,9 +1,9 @@
-﻿@model CreateUiCommand
+﻿@model RenameUiCommand
 @{
     ViewData["Title"] = "Rename";
 }
 
-<h2>Foo</h2>
+<h2>Rename</h2>
 
 <div>
     <form asp-action="Rename" asp-controller="Home">
@@ -28,4 +28,4 @@
 
 @Html.ActionLink("History", "History", "Home", new { id = @Model.Id} )
 
-@Html.ActionLink("HitMe", "HitMe", "Home", new { id = @Model.Id} )
+@Html.ActionLink("Batch Rename", "HitMe", "Home", new { id = @Model.Id} )

@@ -1,0 +1,1 @@
+﻿Compatibility layer for FG

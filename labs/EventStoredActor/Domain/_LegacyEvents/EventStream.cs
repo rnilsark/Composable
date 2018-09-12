@@ -8,7 +8,7 @@ namespace Domain.Events
     [DataContract]
     [KnownType(typeof(CreatedEvent))]
     [KnownType(typeof(RenamedEvent))]
-    [KnownType(typeof(BarAdded))]
+    [KnownType(typeof(BarAddedEvent))]
     public class EventStream : EventStreamBase
     { }
 }

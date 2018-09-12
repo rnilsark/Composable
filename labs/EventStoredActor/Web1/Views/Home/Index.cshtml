@@ -1,9 +1,9 @@
 ﻿@model CreateUiCommand
 @{
-    ViewData["Title"] = "Foo";
+    ViewData["Title"] = "Create";
 }
 
-<h2>Foo</h2>
+<h2>Create</h2>
 
 <div>
     <form asp-action="Create" asp-controller="Home">
@@ -25,3 +25,5 @@
         </div>
     </form>
 </div>
+
+@Html.ActionLink("Batch Create", "Index", "Batch", new { id = @Model.Id })

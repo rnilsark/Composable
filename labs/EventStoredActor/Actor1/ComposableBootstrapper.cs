@@ -53,7 +53,7 @@ namespace Actor1
                     .Map<Domain.Events.ICreatedEvent>("32829f32-4721-46eb-9a4e-ce253302ee9a")
                     .Map<Domain.Events.IRenamedEvent>("0f8ddcb1-7020-472a-b30f-330f26dca469")
                     .Map<Domain.Events.Implementation.CreatedEvent>("d1437586-b262-4d2b-a2b9-7e914d7d0d2d")
-                    .Map<Domain.Events.Implementation.BarAdded>("6f399893-41f6-43a9-b09f-6d5757f0f782")
+                    .Map<Domain.Events.Implementation.BarAddedEvent>("6f399893-41f6-43a9-b09f-6d5757f0f782")
                     .Map<Domain.Events.Implementation.BarEvent>("f90efde9-ab8d-4e04-825d-ef34f0d89bc1")
                     .Map<Domain.Events.Implementation.BarEvent.IdGetterSetter>("7bdbb866-6150-499f-9e6e-68c9899b21cc")
                     .Map<Domain.Events.Implementation.FooEvent>("a2950ca6-3dc2-48d9-a083-c2a799220aff")

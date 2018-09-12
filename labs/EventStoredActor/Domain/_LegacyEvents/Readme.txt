@@ -1,0 +1,1 @@
+﻿Keep namespaces, as is event types for migration (otherwise, we wont be able to deserialize state)

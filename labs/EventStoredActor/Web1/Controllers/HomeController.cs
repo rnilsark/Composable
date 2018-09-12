@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Fabric;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Actor1.Interfaces;
@@ -38,7 +36,7 @@ namespace Web1.Controllers
 
             var readModel = await proxy.GetFooAsync(id, CancellationToken.None);
 
-            return View(new CreateUiCommand { Name = readModel.Name, Id = id });
+            return View(new RenameUiCommand { Name = readModel.Name, Id = id });
         }
 
         public async Task<IActionResult> History(Guid id)
@@ -53,7 +51,7 @@ namespace Web1.Controllers
 
         public IActionResult HitMe(Guid id)
         {
-            return View(new HitMeeUiCommand { Id = id });
+            return View(new HitMeUiCommand { Id = id });
         }
 
         [HttpPost]
@@ -77,7 +75,7 @@ namespace Web1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> HitMe(HitMeeUiCommand command)
+        public async Task<IActionResult> HitMe(HitMeUiCommand command)
         {
             var proxy = _actorProxyFactory.CreateActorProxy<IActor1V2>(new ActorId(command.Id));
 
@@ -87,7 +85,7 @@ namespace Web1.Controllers
                 tasks.Add(proxy.RenameAsync(new RenameCommand { Name = Guid.NewGuid().ToString() }, CancellationToken.None));
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks); //Cause <Count> number of events on a single actor (runs pll but actor access is in fact serial)
 
             return RedirectToAction(nameof(History), new { command.Id });
         }

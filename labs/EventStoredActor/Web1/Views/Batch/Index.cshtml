@@ -1,12 +1,12 @@
 ﻿@model HitMeUiCommand
 @{
-    ViewData["Title"] = "Batch Rename";
+    ViewData["Title"] = "Batch Create";
 }
 
-<h2>Batch Rename</h2>
+<h2>Batch Create</h2>
 
 <div>
-    <form asp-action="HitMe" asp-controller="Home">
+    <form asp-action="HitMe" asp-controller="Batch">
         <div class="form-horizontal">
             <div class="form-group">
                 <label asp-for="Count" class="col-md-2 control-label"></label>
@@ -14,8 +14,6 @@
                     <input asp-for="Count" class="form-control" />
                 </div>
             </div>
-
-            <input type="hidden" asp-for="Id" />
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
@@ -25,3 +23,5 @@
         </div>
     </form>
 </div>
+
+@Html.ActionLink("Create", "Index", "Home", new { id = @Model.Id })

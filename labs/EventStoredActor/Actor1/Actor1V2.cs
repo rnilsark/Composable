@@ -1,29 +1,33 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Actors;
 using Microsoft.ServiceFabric.Actors.Runtime;
 using Actor1.Interfaces;
 using Actor1.Interfaces.Commands;
-using Common.ServiceFabric.Extensions.Actors.Runtime;
-using Composable.DependencyInjection;
+using Common.DDD;
+using CommonV2.DDD;
+using CommonV2.ServiceFabric.Extensions.Actors.Runtime;
 using Composable.Messaging.Buses;
 using Composable.Persistence.EventStore;
 using Domain;
+using Domain.Events.Implementation;
 
 namespace Actor1
 {
     [StatePersistence(StatePersistence.None)]
     internal class Actor1V2 : 
-        EventStoredActorBase, 
-        IActor1V2
+        EventStoredActorBaseV2, 
+        IActor1V2,
+        IHandleDomainEvent<CreatedEvent>,
+        IHandleDomainEvent<RenamedEvent>,
+        IHandleDomainEvent<BarAddedEvent>,
+        IRemindable
     {
-        private readonly IEndpoint _composableEndpoint;
-        
         public Actor1V2(ActorService actorService, ActorId actorId, IEndpoint composableEndpoint)
-            : base(actorService, actorId)
+            : base(actorService, actorId, composableEndpoint)
         {
-            _composableEndpoint = composableEndpoint;
         }
 
         protected override Task OnActivateAsync()
@@ -32,44 +36,46 @@ namespace Actor1
             return base.OnActivateAsync();
         }
 
+        //Example of when updating an aggregate
         public Task RenameAsync(RenameCommand command, CancellationToken cancellationToken)
         {
-            return RunTransaction((IEventStoreUpdater eventStoreUpdater) =>
-            {
-                eventStoreUpdater
-                    .Get<Foo>(this.GetActorId().GetGuidId())
-                    .Rename(command.Name);
-                
-                return Task.FromResult(true);
-            });
+            return ExecuteCommandAsync(
+                (IEventStoreUpdater eventStoreUpdater) => 
+                    eventStoreUpdater.Get<Foo>(this.GetActorId().GetGuidId(), this).Rename(command.Name), command, cancellationToken);
         }
 
+        //Example of when creating an aggregate
         public Task CreateAsync(CreateCommand command, CancellationToken cancellationToken)
         {
-            return RunTransaction((IEventStoreUpdater eventStoreUpdater) =>
-            {
-                Foo.Create(this.GetActorId().GetGuidId(), command.Name, eventStoreUpdater);
-                return Task.FromResult(true);
-            });
+            return ExecuteCommandAsync(
+                (IEventStoreUpdater eventStoreUpdater) => Foo.Create(this.GetActorId().GetGuidId(), command.Name, eventStoreUpdater, this), 
+                command, 
+                cancellationToken);
         }
-        
-        private TResult RunTransaction<TResult, TComponent>(Func<TComponent, TResult> func) where TComponent : class
+
+        //Verify backwards compatibility of having "side effects"
+        public async Task Handle(CreatedEvent domainEvent)
         {
-            var result = default(TResult);
-            
-            var container = _composableEndpoint.ServiceLocator;
-            using (container.BeginScope())
-            {
-                //TODO: Handle command de-duplication with SQL table
-                container.ExecuteTransaction(() =>
-                {
-                    var component = container.Resolve<TComponent>();
-                    result = func(component);
-                });
-            }
-
-            return result;
+            await RegisterReminderAsync("note_to_self", null, TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(-1));
+            await Log(domainEvent);
         }
 
+        public Task Handle(RenamedEvent domainEvent) => Log(domainEvent);
+        public Task Handle(BarAddedEvent domainEvent) => Log(domainEvent);
+
+        public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
+        {
+            if (reminderName == "note_to_self")
+            {
+                RenameAsync(new RenameCommand {Name = "Noted myself"}, CancellationToken.None);
+            }
+            return Task.FromResult(true);
+        }
+
+        private Task Log<T>(T @event) where  T : IDomainEvent
+        {
+            ActorEventSource.Current.Message($"{typeof(T).FullName}: {@event.UtcTimeStamp:O}");
+            return Task.FromResult(true);
+        }
     }
 }

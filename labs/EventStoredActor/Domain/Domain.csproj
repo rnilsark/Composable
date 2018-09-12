@@ -6,13 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="_Legacy\**" />
+    <EmbeddedResource Remove="_Legacy\**" />
+    <None Remove="_Legacy\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\src\framework\Composable.CQRS\Composable.CQRS.csproj" />
     <ProjectReference Include="..\CommonV2\CommonV2.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="_Legacy\" />
+    <Folder Include="_LegacyEvents\Implementation\" />
   </ItemGroup>
 
 </Project>

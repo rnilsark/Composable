@@ -2,7 +2,7 @@
 
 namespace Web1.Models
 {
-    public class HitMeeUiCommand
+    public class HitMeUiCommand
     {
         public Guid Id { get; set; }
         public int Count { get; set; }
