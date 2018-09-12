@@ -1,17 +1,17 @@
-﻿@model CreateUiCommand
+﻿@model HitMeeUiCommand
 @{
-    ViewData["Title"] = "Foo";
+    ViewData["Title"] = "HitMe";
 }
 
 <h2>Foo</h2>
 
 <div>
-    <form asp-action="Create" asp-controller="Home">
+    <form asp-action="HitMe" asp-controller="Home">
         <div class="form-horizontal">
             <div class="form-group">
-                <label asp-for="Name" class="col-md-2 control-label"></label>
+                <label asp-for="Count" class="col-md-2 control-label"></label>
                 <div class="col-md-10">
-                    <input asp-for="Name" class="form-control" />
+                    <input asp-for="Count" class="form-control" />
                 </div>
             </div>
 
@@ -19,7 +19,7 @@
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-default" />
+                    <input type="submit" value="HitMe" class="btn btn-default" />
                 </div>
             </div>
         </div>

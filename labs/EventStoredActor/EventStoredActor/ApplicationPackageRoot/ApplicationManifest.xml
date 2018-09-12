@@ -3,9 +3,9 @@
   <Parameters>
     <Parameter Name="Web1_ASPNETCORE_ENVIRONMENT" DefaultValue="" />
     <Parameter Name="Web1_InstanceCount" DefaultValue="-1" />
-    <Parameter Name="Actor1ActorService_PartitionCount" DefaultValue="10" />
-    <Parameter Name="Actor1ActorService_MinReplicaSetSize" DefaultValue="3" />
-    <Parameter Name="Actor1ActorService_TargetReplicaSetSize" DefaultValue="3" />
+    <Parameter Name="Actor1V2ActorService_PartitionCount" DefaultValue="10" />
+    <Parameter Name="Actor1V2ActorService_MinReplicaSetSize" DefaultValue="1" />
+    <Parameter Name="Actor1V2ActorService_TargetReplicaSetSize" DefaultValue="1" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -26,9 +26,9 @@
         <SingletonPartition />
       </StatelessService>
     </Service>
-    <Service Name="Actor1ActorService" GeneratedIdRef="59403c02-0d29-4f72-8869-463cee765876|Persisted">
-      <StatefulService ServiceTypeName="Actor1ActorServiceType" TargetReplicaSetSize="[Actor1ActorService_TargetReplicaSetSize]" MinReplicaSetSize="[Actor1ActorService_MinReplicaSetSize]">
-        <UniformInt64Partition PartitionCount="[Actor1ActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+    <Service Name="Actor1V2ActorService" GeneratedIdRef="d9199e37-9109-46c1-aca1-c4327b165341|None">
+      <StatefulService ServiceTypeName="Actor1V2ActorServiceType" TargetReplicaSetSize="[Actor1V2ActorService_TargetReplicaSetSize]" MinReplicaSetSize="[Actor1V2ActorService_MinReplicaSetSize]">
+        <UniformInt64Partition PartitionCount="[Actor1V2ActorService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
       </StatefulService>
     </Service>
     <!-- The section below creates instances of service types, when an instance of this 

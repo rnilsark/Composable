@@ -9,11 +9,8 @@ namespace Domain
         {
             public Bar(Foo aggregateRoot, int id) : base(aggregateRoot)
             {
-                Id = id;
                 RegisterEventAppliers();
             }
-
-            public int Id { get; }
         }
     }
 }

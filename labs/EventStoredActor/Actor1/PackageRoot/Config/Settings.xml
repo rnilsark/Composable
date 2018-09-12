@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Settings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
-  <Section Name="Actor1ActorServiceReplicatorConfig">
-    <Parameter Name="ReplicatorEndpoint" Value="Actor1ActorServiceReplicatorEndpoint" />
+  <Section Name="Actor1V2ActorServiceReplicatorConfig">
+    <Parameter Name="ReplicatorEndpoint" Value="Actor1V2ActorServiceReplicatorEndpoint" />
     <Parameter Name="BatchAcknowledgementInterval" Value="0.005" />
   </Section>
-  <Section Name="Actor1ActorServiceReplicatorSecurityConfig">
+  <Section Name="Actor1V2ActorServiceReplicatorSecurityConfig">
     <Parameter Name="CredentialType" Value="None" />
+  </Section>
+  <Section Name="Composable">
+    <Parameter Name="HostedEndpoint.TestingEndpointHost_Default_Client_Endpoint.ConnectionString" Value="Server=tcp:composable.database.windows.net,1433;Initial Catalog=composable;Persist Security Info=False;User ID=richard;Password=Warcraft3;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" />
+    <Parameter Name="ServerEndpoints" Value="" />
   </Section>
   <!-- The content will be generated during build -->
 </Settings>

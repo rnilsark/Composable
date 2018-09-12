@@ -1,0 +1,17 @@
+﻿@model HistoryViewModel
+@{
+    ViewData["Title"] = "History";
+}
+
+<h2>Foo</h2>
+
+<div>
+    <ul>
+        @foreach (var e in @Model.EventNames)
+        {
+        <li>@e</li>
+        }
+    </ul>
+</div>
+
+@Html.ActionLink("Rename", "Rename", "Home", new { id = @Model.Id} )

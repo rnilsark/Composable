@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using Common.DDD;
-using Composable.Persistence.EventStore;
+using CommonV2.DDD;
 using Composable.Persistence.EventStore.Aggregates;
 
 namespace Domain.Events.Implementation
 {
-    public abstract class FooEvent : AggregateEvent, IAggregateRootEvent, IFooEvent
+    public abstract class FooEvent : DomainEventBase, IFooEvent
     {
         protected FooEvent()
         {
-            
         }
 
         protected FooEvent(Guid aggregateId) : base(aggregateId)
@@ -18,9 +15,19 @@ namespace Domain.Events.Implementation
         }
     }
 
-    public class NameSet : FooEvent, INameSetEvent 
+    public class CreatedEvent : FooEvent, ICreatedEvent
     {
-        public NameSet(Guid id, string name) : base(id)
+        public CreatedEvent(Guid id, string name) : base(id)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    public class RenamedEvent : FooEvent, IRenamedEvent 
+    {
+        public RenamedEvent(string name)
         {
             Name = name;
         }

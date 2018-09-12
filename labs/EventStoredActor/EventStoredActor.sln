@@ -7,7 +7,7 @@ Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "EventStoredActor", "EventSt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Actor1", "Actor1\Actor1.csproj", "{F7264FE8-6C79-48F1-A5C8-757F70DEB8E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Actor1.Interfaces", "Actor1.Interfaces\Actor1.Interfaces.csproj", "{9BF704E5-944F-4B0D-85CC-62C9E0A2B0AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Actor1.Interfaces", "Actor1.Interfaces\Actor1.Interfaces.csproj", "{9BF704E5-944F-4B0D-85CC-62C9E0A2B0AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{A034D2C2-297B-4FE0-9E65-00C4D45256FA}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Composable.CQRS", "..\..\src\framework\Composable.CQRS\Composable.CQRS.csproj", "{BF7072BC-8C72-421C-8BF3-82E28F7A88AC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Composable.CQRS.ExternalDependencies", "..\..\src\framework\Composable.CQRS.ExternalDependencies\Composable.CQRS.ExternalDependencies.csproj", "{9DC17002-654E-4138-9FD9-1CABDA2D9C20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonV2", "CommonV2\CommonV2.csproj", "{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,14 @@ Global
 		{9DC17002-654E-4138-9FD9-1CABDA2D9C20}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DC17002-654E-4138-9FD9-1CABDA2D9C20}.Release|x64.ActiveCfg = Release|Any CPU
 		{9DC17002-654E-4138-9FD9-1CABDA2D9C20}.Release|x64.Build.0 = Release|Any CPU
+		{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}.Debug|x64.Build.0 = Debug|Any CPU
+		{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}.Release|x64.ActiveCfg = Release|Any CPU
+		{9268F6C8-CFD7-4FF1-95B3-EF5182291EAD}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

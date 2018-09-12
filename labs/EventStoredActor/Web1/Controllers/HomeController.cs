@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Fabric;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Actor1.Interfaces;
@@ -19,39 +22,76 @@ namespace Web1.Controllers
 
         public HomeController()
         {
-
             _actorProxyFactory = new ActorProxyFactory();
-            _actorServiceUri = new Uri($@"{FabricRuntime.GetActivationContext().ApplicationName}/{"Actor1ActorService"}");
+            _actorServiceUri = new Uri($@"{FabricRuntime.GetActivationContext().ApplicationName}/{"Actor1V2ActorService"}");
         }
 
-
-        [HttpGet]
         public IActionResult Index()
         {
-            return View(new SetNameUiCommand { Id = Guid.NewGuid() });
+            return View(new CreateUiCommand { Id = Guid.NewGuid() });
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Index(Guid id)
+        public async Task<IActionResult> Rename(Guid id)
         {
-            var proxy = _actorProxyFactory.CreateActorServiceProxy<IActor1ActorService>(
+            var proxy = _actorProxyFactory.CreateActorServiceProxy<IActor1V2ActorService>(
                 _actorServiceUri, new ActorId(id));
 
-            var readModel = await proxy.GetAsync(id, CancellationToken.None);
+            var readModel = await proxy.GetFooAsync(id, CancellationToken.None);
 
-            return View(new SetNameUiCommand { Name = readModel.Name, Id = id });
+            return View(new CreateUiCommand { Name = readModel.Name, Id = id });
+        }
+
+        public async Task<IActionResult> History(Guid id)
+        {
+            var proxy = _actorProxyFactory.CreateActorServiceProxy<IActor1V2ActorService>(
+                _actorServiceUri, new ActorId(id));
+
+            var readModel = await proxy.GetHistoryAsync(id, CancellationToken.None);
+
+            return View(new HistoryViewModel { EventNames = readModel.EventNames, Id = id });
+        }
+
+        public IActionResult HitMe(Guid id)
+        {
+            return View(new HitMeeUiCommand { Id = id });
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(SetNameUiCommand command)
+        public async Task<IActionResult> Create(CreateUiCommand command)
         {
-            var proxy = _actorProxyFactory.CreateActorProxy<IActor1>(new ActorId(command.Id));
+            var proxy = _actorProxyFactory.CreateActorProxy<IActor1V2>(new ActorId(command.Id));
 
-            await proxy.SetNameAsync(new SetNameCommand { Name = command.Name }, CancellationToken.None);
+            await proxy.CreateAsync(new CreateCommand { Name = command.Name }, CancellationToken.None);
 
-            return RedirectToAction(nameof(Index), new { command.Id });
+            return RedirectToAction(nameof(Rename), new { command.Id });
         }
-        
+
+        [HttpPost]
+        public async Task<IActionResult> Rename(RenameUiCommand command)
+        {
+            var proxy = _actorProxyFactory.CreateActorProxy<IActor1V2>(new ActorId(command.Id));
+
+            await proxy.RenameAsync(new RenameCommand { Name = command.Name }, CancellationToken.None);
+
+            return RedirectToAction(nameof(Rename), new { command.Id });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> HitMe(HitMeeUiCommand command)
+        {
+            var proxy = _actorProxyFactory.CreateActorProxy<IActor1V2>(new ActorId(command.Id));
+
+            var tasks = new List<Task>();
+            for (var i = 0; i < command.Count; i++)
+            {
+                tasks.Add(proxy.RenameAsync(new RenameCommand { Name = Guid.NewGuid().ToString() }, CancellationToken.None));
+            }
+
+            await Task.WhenAll(tasks);
+
+            return RedirectToAction(nameof(History), new { command.Id });
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

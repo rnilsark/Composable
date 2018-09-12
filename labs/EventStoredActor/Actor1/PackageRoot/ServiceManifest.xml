@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="Actor1Pkg" Version="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <ServiceTypes>
-    <StatefulServiceType ServiceTypeName="Actor1ActorServiceType" HasPersistedState="true">
+    <StatefulServiceType ServiceTypeName="Actor1V2ActorServiceType">
       <Extensions>
-        <Extension Name="__GeneratedServiceType__" GeneratedId="59403c02-0d29-4f72-8869-463cee765876|Persisted">
+        <Extension Name="__GeneratedServiceType__" GeneratedId="d9199e37-9109-46c1-aca1-c4327b165341|None">
           <GeneratedNames xmlns="http://schemas.microsoft.com/2015/03/fabact-no-schema">
-            <DefaultService Name="Actor1ActorService" />
-            <ReplicatorEndpoint Name="Actor1ActorServiceReplicatorEndpoint" />
-            <ReplicatorConfigSection Name="Actor1ActorServiceReplicatorConfig" />
-            <ReplicatorSecurityConfigSection Name="Actor1ActorServiceReplicatorSecurityConfig" />
-            <StoreConfigSection Name="Actor1ActorServiceLocalStoreConfig" />
-            <ServiceEndpointV2_1 Name="Actor1ActorServiceEndpointV2_1" />
+            <DefaultService Name="Actor1V2ActorService" />
+            <ReplicatorEndpoint Name="Actor1V2ActorServiceReplicatorEndpoint" />
+            <ReplicatorConfigSection Name="Actor1V2ActorServiceReplicatorConfig" />
+            <ReplicatorSecurityConfigSection Name="Actor1V2ActorServiceReplicatorSecurityConfig" />
+            <StoreConfigSection Name="Actor1V2ActorServiceLocalStoreConfig" />
+            <ServiceEndpointV2_1 Name="Actor1V2ActorServiceEndpointV2_1" />
           </GeneratedNames>
         </Extension>
       </Extensions>
@@ -26,8 +26,8 @@
   <ConfigPackage Name="Config" Version="1.0.0" />
   <Resources>
     <Endpoints>
-      <Endpoint Name="Actor1ActorServiceEndpointV2_1" />
-      <Endpoint Name="Actor1ActorServiceReplicatorEndpoint" />
+      <Endpoint Name="Actor1V2ActorServiceEndpointV2_1" />
+      <Endpoint Name="Actor1V2ActorServiceReplicatorEndpoint" />
     </Endpoints>
   </Resources>
   <!-- The content will be generated during build -->

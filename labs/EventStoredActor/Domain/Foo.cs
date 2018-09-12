@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Common.DDD;
 using Composable.GenericAbstractions.Time;
+using Composable.Persistence.EventStore;
 using Composable.Persistence.EventStore.Aggregates;
 using Domain.Events;
 using Domain.Events.Implementation;
@@ -14,13 +12,13 @@ namespace Domain
         public Foo() : base(new DateTimeNowTimeSource())
         {
             RegisterEventAppliers()
-                .For<INameSetEvent>(Apply)
+                .For<IRenamedEvent>(Apply)
                 .For<IFooNamePropertyUpdated>(e => Name = e.Name);
 
             _bars = Bar.CreateSelfManagingCollection(this);
         }
 
-        private void Apply(INameSetEvent @event)
+        private void Apply(IRenamedEvent @event)
         {
             Name = @event.Name;
         }
@@ -29,12 +27,19 @@ namespace Domain
 
         private Bar.CollectionManager _bars;
 
-        public void SetName(Guid id, string name)
+        public static void Create(Guid id, string name, IEventStoreUpdater eventStoreUpdater)
+        {
+            var foo = new Foo();
+            foo.Publish(new CreatedEvent(id, name));
+            eventStoreUpdater.Save(foo);
+        }
+
+        public void Rename(string name)
         {
             if (name.Length < 3)
                 throw new ArgumentException("Name should be at least 5 characters.");
 
-            Publish(new NameSet(id, name));
+            Publish(new RenamedEvent(name));
         }
     }
 }

@@ -6,7 +6,8 @@ namespace Domain.Events
 {
     //Used to store the whole event stream in reliable collections
     [DataContract]
-    [KnownType(typeof(NameSet))]
+    [KnownType(typeof(CreatedEvent))]
+    [KnownType(typeof(RenamedEvent))]
     [KnownType(typeof(BarAdded))]
     public class EventStream : EventStreamBase
     { }
