@@ -8,7 +8,7 @@
     <Parameter Name="CredentialType" Value="None" />
   </Section>
   <Section Name="Composable">
-    <Parameter Name="HostedEndpoint.TestingEndpointHost_Default_Client_Endpoint.ConnectionString" Value="Server=tcp:composable.database.windows.net,1433;Initial Catalog=composable;Persist Security Info=False;User ID=richard;Password=Warcraft3;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" />
+    <Parameter Name="HostedEndpoint.TestingEndpointHost_Default_Client_Endpoint.ConnectionString" Value="Server=tcp:composable.database.windows.net,1433;Initial Catalog=composable;Persist Security Info=False;User ID=richard;Password=;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" />
     <Parameter Name="ServerEndpoints" Value="" />
   </Section>
   <!-- The content will be generated during build -->
