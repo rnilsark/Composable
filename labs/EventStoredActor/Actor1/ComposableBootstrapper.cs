@@ -1,26 +1,64 @@
 ﻿using System.Fabric;
+using System.Threading;
 using System.Threading.Tasks;
 using Common.ServiceFabric.Extensions;
 using Composable.DependencyInjection;
 using Composable.DependencyInjection.Persistence;
 using Composable.Messaging.Buses;
 using Composable.System.Configuration;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
 
 namespace Actor1
 {
     internal class ComposableBootstrapper
     {
-        private readonly IEndpointHost _host;
-
-        public ComposableBootstrapper(ServiceContext context)
+        private readonly CommunicationListenerImpl _communicationListener;
+        
+        public ComposableBootstrapper(ServiceContext context, string endpointName)
         {
-            _host = EndpointHost.Production.Create(DependencyInjectionContainer.Create);
-            ComposableEndpoint = Registrar.RegisterWith(_host, context);    
+            _communicationListener = new CommunicationListenerImpl(context, endpointName);
         }
 
-        public Task StartAsync() => _host.StartAsync();
+        public ICommunicationListener CommunicationListener => _communicationListener;
+        public IEndpoint Endpoint => _communicationListener.Endpoint;
 
-        public IEndpoint ComposableEndpoint { get; }
+        private class CommunicationListenerImpl : ICommunicationListener
+        {
+            private readonly ServiceContext _context;
+            private readonly string _endpointName;
+            private IEndpointHost _host;
+
+            public IEndpoint Endpoint { get; private set; }
+
+            public CommunicationListenerImpl(ServiceContext context, string endpointName)
+            {
+                _context = context;
+                _endpointName = endpointName;
+            }
+
+            public async Task<string> OpenAsync(CancellationToken cancellationToken)
+            {
+                // This sets up the container when secondary is promoted.
+                _host = EndpointHost.Production.Create(DependencyInjectionContainer.Create);
+                Endpoint = Registrar.RegisterWith(_host, _context);
+
+                await _host.StartAsync();
+                return _endpointName;
+
+            }
+
+            public Task CloseAsync(CancellationToken cancellationToken)
+            {
+                // This disposes the container when primary is demoted.
+                _host.Dispose();
+                return Task.CompletedTask;
+            }
+
+            public void Abort()
+            {
+                CloseAsync(CancellationToken.None);
+            }
+        }
 
         // ReSharper disable once ClassNeverInstantiated.Local
         private class Registrar

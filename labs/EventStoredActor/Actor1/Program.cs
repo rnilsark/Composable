@@ -4,9 +4,6 @@ using Microsoft.ServiceFabric.Actors.Runtime;
 
 namespace Actor1
 {
-    
-    // TODO: Figure out a good way of bootstrapping composable.
-
     internal static class Program
     {
         private static void Main()
@@ -17,7 +14,7 @@ namespace Actor1
                    actorServiceFactory: (context, actorType) => new Actor1V2ActorService(
                        context, 
                        actorType, 
-                       new ComposableBootstrapper(context))).GetAwaiter().GetResult();
+                       new ComposableBootstrapper(context, "Foo"))).GetAwaiter().GetResult();
 
                 Thread.Sleep(Timeout.Infinite);
             }

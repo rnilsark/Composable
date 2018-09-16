@@ -72,10 +72,10 @@ namespace Actor1
             return Task.FromResult(true);
         }
 
-        private Task Log<T>(T @event) where  T : IDomainEvent
+        private static Task Log<T>(T @event) where  T : IDomainEvent
         {
             ActorEventSource.Current.Message($"{typeof(T).FullName}: {@event.UtcTimeStamp:O}");
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
     }
 }

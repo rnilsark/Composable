@@ -9,7 +9,7 @@ using Composable.System.Linq;
 
 namespace Composable.Messaging.Buses
 {
-    class Endpoint : IEndpoint
+    public class Endpoint : IEndpoint
     {
         readonly EndpointConfiguration _configuration;
         public bool IsRunning { get; private set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Fabric;
 using System.Linq;
 using System.Threading;
@@ -8,6 +9,8 @@ using Actor1.Interfaces.ReadModels;
 using Composable.Persistence.EventStore;
 using Domain.Events;
 using Microsoft.ServiceFabric.Actors.Runtime;
+using Microsoft.ServiceFabric.Services.Communication.Runtime;
+using Microsoft.ServiceFabric.Services.Remoting.Runtime;
 
 namespace Actor1
 {
@@ -23,7 +26,7 @@ namespace Actor1
             Func<ActorBase, IActorStateProvider, IActorStateManager> stateManagerFactory = null,
             IActorStateProvider stateProvider = null,
             ActorServiceSettings settings = null) :
-            base(context, actorTypeInfo, (service, id) => new Actor1V2(service, id, composableBootstrapper.ComposableEndpoint), stateManagerFactory, stateProvider, settings)
+            base(context, actorTypeInfo, (service, id) => new Actor1V2(service, id, composableBootstrapper.Endpoint), stateManagerFactory, stateProvider, settings)
         {
             _composableBootstrapper = composableBootstrapper;
         }
@@ -31,15 +34,19 @@ namespace Actor1
         protected override async Task RunAsync(CancellationToken cancellationToken)
         {
             await base.RunAsync(cancellationToken);
-            await _composableBootstrapper.StartAsync();
-
+            
             if (cancellationToken.CanBeCanceled)
                 cancellationToken.ThrowIfCancellationRequested();
         }
 
+        protected override IEnumerable<ServiceReplicaListener> CreateServiceReplicaListeners()
+        {
+            return base.CreateServiceReplicaListeners().Concat(new[] { new ServiceReplicaListener(context => _composableBootstrapper.CommunicationListener) });
+        }
+
         public Task<FooReadModelContract> GetFooAsync(Guid id, CancellationToken cancellationToken)
         {
-            var container = _composableBootstrapper.ComposableEndpoint.ServiceLocator;
+            var container = _composableBootstrapper.Endpoint.ServiceLocator;
             using (container.BeginScope())
             {
                 var eventStoreReader = container.Resolve<IEventStoreReader>();
@@ -51,7 +58,7 @@ namespace Actor1
 
         public Task<HistoryReadModelContract> GetHistoryAsync(Guid id, CancellationToken cancellationToken)
         {
-            var container = _composableBootstrapper.ComposableEndpoint.ServiceLocator;
+            var container = _composableBootstrapper.Endpoint.ServiceLocator;
             using (container.BeginScope())
             {
                 var eventStoreReader = container.Resolve<IEventStoreReader>();
