@@ -63,13 +63,12 @@ namespace Actor1
         public Task Handle(RenamedEvent domainEvent) => Log(domainEvent);
         public Task Handle(BarAddedEvent domainEvent) => Log(domainEvent);
 
-        public Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
+        public async Task ReceiveReminderAsync(string reminderName, byte[] state, TimeSpan dueTime, TimeSpan period)
         {
             if (reminderName == "note_to_self")
             {
-                RenameAsync(new RenameCommand {Name = "Noted myself"}, CancellationToken.None);
+                await RenameAsync(new RenameCommand {Name = "Noted myself"}, CancellationToken.None);
             }
-            return Task.FromResult(true);
         }
 
         private static Task Log<T>(T @event) where  T : IDomainEvent
